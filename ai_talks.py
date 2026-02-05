@@ -2,24 +2,22 @@ from openai import OpenAI
 
 import os
 
-from dotenv import load_dotenv
-
-load_dotenv()
+from utils import *
 
 client = OpenAI(
   base_url="https://openrouter.ai/api/v1",
-  api_key=os.getenv("AI_TOKEN"),
+  api_key=AI_TOKEN,
 )
 
-def ai_response(all_messages):
+def ai_response(message):
   try:
+    with open("data/"+str(message.chat.id)+".txt", "r") as sms:
+        all_messages = sms.read()
     response = client.chat.completions.create(
-      model="stepfun/step-3.5-flash:free",
+      model=AI_MODEL,
       messages=[
         {"role": "system",
-         "content": """Ты пишешь новости получая новости в формате переписки в группе для общения, получая сообщения в формате 
-         "сообщеие" / "имя пользователя". Выбери из полученных сообщений самые интересные (не все, до 5 новостей) и 
-         расскажи он их в формате желтушной прессы добавляя много смайликов."""
+         "content": AI_PROMPT
          },
         {
           "role": "user",
